@@ -12,7 +12,7 @@ service cloud.firestore {
       	return ['spitznamen', 'wohnort', 'plan', 'motto', 'lieblingsfach', 'ohne-das', 'songtipp', 'lieblingsgetraenke', 'gewinnen', 'zu-oft', 'langweiliges-buch', 'abwesenheitsgrund', 'gelernt', 'vermissen', 'tipplehrer', 'ratschlag-schueler', 'vorname', 'geburtsdatum'];
       }
     	
-    	function validate(data) {
+    	function validate_data(data) {
       	return data.keys().hasAll(valid_keys()) && data.keys().hasOnly(valid_keys());
       }
       
@@ -23,7 +23,7 @@ service cloud.firestore {
     	
       allow write: if request.auth != null
         && validate_token(token, request.resource.data)
-        && validate(request.resource.data);
+        && validate_data(request.resource.data);
     }
   }
 }
