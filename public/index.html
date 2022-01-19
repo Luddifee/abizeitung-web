@@ -189,13 +189,13 @@
                 event.stopPropagation();
 
                 if (form.checkValidity()) {
-                    const token = value('token');
+                    const token = value('token').trim().toLowerCase();
                     const fields = Object.keys(formData);
                     fields.push('vorname');
                     fields.push('geburtsdatum');
 
                     const data = {};
-                    fields.forEach((field) => { data[field] = value(field); })
+                    fields.forEach((field) => { data[field] = value(field).trim(); })
 
                     sendData(token, data).then(() => {
                         form.innerHTML = '';
