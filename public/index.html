@@ -17,7 +17,8 @@
         <main>
             <div class="py-5 text-center">
                 <h2>Formular zur Abizeitung</h2>
-                <p id="title-text">Auf dieser Seite sollen Textfelder ausgefüllt werden, um die für jeden Schüler benötigten Daten
+                <p id="title-text">Auf dieser Seite sollen Textfelder ausgefüllt werden, um die für jeden Schüler
+                    benötigten Daten
                     sammeln zu können.<br><b>Bitte bedenke, dass deine Antworten nicht zu lang sein sollten.</b></p>
             </div>
             <div class="container">
@@ -29,13 +30,14 @@
                             <div class="invalid-feedback">Bitte gib den Vornamen der Person ein.</div>
                         </div>
                         <div class="col-sm-4">
-                            <label for="token" class="form-label">Token</label>
+                            <label for="token" class="form-label">Token <span id="token-reload-btn" class="visually-hidden">🗘</span></label>
                             <input type="password" class="form-control" id="token" placeholder="Token" required>
                             <div class="invalid-feedback">Bitte gib den Authentifizierungs-Token der Person ein.</div>
                         </div>
                         <div class="col-sm-4">
                             <label for="geburtsdatum" class="form-label">Geburtsdatum</label>
-                            <input type="date" class="form-control" id="geburtsdatum" placeholder="Geburtsdatum" required>
+                            <input type="date" class="form-control" id="geburtsdatum" placeholder="Geburtsdatum"
+                                required>
                             <div class="invalid-feedback">Bitte gib ein Geburtsdatum an.</div>
                         </div>
                     </div>
@@ -49,7 +51,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-analytics.js";
         import { signInAnonymously, getAuth } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-firestore.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -205,16 +207,53 @@
 
                 form.classList.add('was-validated');
             }, false);
+
+            const tokenInput = document.getElementById('token');
+            const tokenReloadButton = document.getElementById('token-reload-btn');
+            tokenReloadButton.style.cursor = 'pointer';
+            tokenInput.oninput = () => {
+                const text = tokenInput.value.trim().toLowerCase();
+                if (text.length >= 6 && text.length <= 20) {
+                    tokenReloadButton.classList.remove('visually-hidden');
+                } else {
+                    tokenReloadButton.classList.add('visually-hidden');
+                }
+            };
+
+            tokenReloadButton.onclick = async () => {
+                try {
+                    const data = await getData(tokenInput.value.trim().toLowerCase());
+                    if (data !== null) {
+                        for (const [id, value] of Object.entries(data)) {
+                            document.getElementById(id).value = value;
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
         };
 
-        const sendData = async (token, data) => {
+        const getEntryDataDocument = async (token) => {
             if (auth.currentUser === null) {
                 await signInAnonymously(auth);
             }
 
             const entryDataCollection = collection(firestore, 'entrydata');
-            const document = doc(entryDataCollection, token);
-            await setDoc(document, data);
+            return doc(entryDataCollection, token);
+        }
+
+        const getData = async (token) => {
+            const snapshot = await getDoc(await getEntryDataDocument(token));
+            if (snapshot.exists) {
+                return snapshot.data();
+            } else {
+                return null;
+            }
+        };
+
+        const sendData = async (token, data) => {
+            await setDoc(await getEntryDataDocument(token), data);
         };
 
         const value = (name) => {
