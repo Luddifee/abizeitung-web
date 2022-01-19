@@ -4,12 +4,12 @@ service cloud.firestore {
   	match /name-lookups/{document=**} {
     	allow read, write: if false;
     }
-    
+
     match /entrydata/{token} {
-    	allow read: if true;
+    	allow read: if request.auth.token.email != null;
       
     	function valid_keys() {
-      	return ['vorname', 'spitzname', 'geburtsdatum', 'berufswunsch'];
+      	return ['spitznamen', 'wohnort', 'plan', 'motto', 'lieblingsfach', 'ohne-das', 'songtipp', 'lieblingsgetraenke', 'gewinnen', 'zu-oft', 'langweiliges-buch', 'abwesenheitsgrund', 'gelernt', 'vermissen', 'tipplehrer', 'ratschlag-schueler', 'vorname', 'geburtsdatum'];
       }
     	
     	function validate(data) {

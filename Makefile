@@ -1,3 +1,2 @@
-all:
-	cp index.html public/index.html
+deploy:
 	firebase deploy
