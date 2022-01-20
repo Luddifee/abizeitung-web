@@ -9,7 +9,7 @@ service cloud.firestore {
     	allow read: if request.auth != null;
       
     	function valid_keys() {
-      	return ['spitznamen', 'wohnort', 'plan', 'motto', 'lieblingsfach', 'ohne-das', 'songtipp', 'lieblingsgetraenke', 'gewinnen', 'zu-oft', 'langweiliges-buch', 'abwesenheitsgrund', 'gelernt', 'vermissen', 'tipplehrer', 'ratschlag-schueler', 'vorname', 'geburtsdatum'];
+      	return ['spitznamen', 'wohnort', 'plan', 'motto', 'lieblingsfach', 'hassfach', 'ohne-das', 'songtipp', 'lieblingsgetraenke', 'gewinnen', 'zu-oft', 'langweiliges-buch', 'abwesenheitsgrund', 'gelernt', 'vermissen', 'tipplehrer', 'ratschlag-schueler', 'vorname', 'geburtsdatum'];
       }
     	
     	function validate_data(data) {
