@@ -1,278 +1,44 @@
 <!DOCTYPE html>
 <html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="cropper.min.css">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="cropper.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
 
     <title>Formular zur Abizeitung</title>
-</head>
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
     <div class="container">
-        <main>
-            <div class="py-5 text-center">
-                <h2>Formular zur Abizeitung</h2>
-                <p id="title-text">Auf dieser Seite sollen Textfelder ausgefüllt werden, um die für jeden Schüler
-                    benötigten Daten
-                    sammeln zu können.<br><b>Bitte bedenke, dass deine Antworten nicht zu lang sein sollten.</b></p>
-            </div>
-            <div class="container">
-                <form class="needs-validation" autocomplete="off" novalidate>
-                    <div class="row g-3">
-                        <div class="col-sm-4">
-                            <label for="vorname" class="form-label">Vorname</label>
-                            <input type="text" class="form-control" id="vorname" placeholder="Vorname" required>
-                            <div class="invalid-feedback">Bitte gib den Vornamen der Person ein.</div>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="token" class="form-label">Token <span id="token-reload-btn"
-                                    class="visually-hidden"><img src="reload.svg"></span></label>
-                            <input type="password" class="form-control" id="token" placeholder="Token" required>
-                            <div class="invalid-feedback">Bitte gib den Authentifizierungs-Token der Person ein.</div>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="geburtsdatum" class="form-label">Geburtsdatum</label>
-                            <input type="date" class="form-control" id="geburtsdatum" placeholder="Geburtsdatum"
-                                required>
-                            <div class="invalid-feedback">Bitte gib ein Geburtsdatum an.</div>
-                        </div>
-                    </div>
-                </form>
-                <div class="py-4 text-center"><p><a href="https://github.com/Luddifee/abizeitung-web/">View on GitHub</a></p></div>
-            </div>
-        </main>
+      <main>
+        <div class="py-5 text-center" id="header">
+          <h2>Formular zur Abizeitung</h2>
+          <p>Um diese Webseite verwenden zu können, muss JavaScript in deinem Browser aktiviert sein.</p>
+        </div>
+        <div class="container">
+          <form
+            class="row g-3 needs-validation"
+            autocomplete="off"
+            novalidate
+          />
+          <!-- <div class="py-4 text-center">
+            <p>
+              <a href="https://github.com/Luddifee/abizeitung-web/"
+                >View on GitHub</a
+              >
+            </p>
+          </div> -->
+        </div>
+      </main>
     </div>
 
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-analytics.js";
-        import { signInAnonymously, getAuth } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-firestore.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-            apiKey: "AIzaSyAfYqX4XPmgJ3lWdzc66lAuGEHVWhjdr3s",
-            authDomain: "gympeg-abizeitung.firebaseapp.com",
-            projectId: "gympeg-abizeitung",
-            storageBucket: "gympeg-abizeitung.appspot.com",
-            messagingSenderId: "232535777638",
-            appId: "1:232535777638:web:ad2eb5602fa8d3a89128a7",
-            measurementId: "G-YM1XGVZFQY"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-        const firestore = getFirestore(app);
-
-        const formData = {
-            'spitznamen': {
-                'hint': 'Spitzname/n',
-                'error': false,
-            },
-            'wohnort': {
-                'hint': 'Wohnort',
-                'error': true,
-            },
-            'plan': {
-                'hint': 'Plan/Pläne nach dem Abi',
-                'error': false,
-            },
-            'motto': {
-                'hint': 'Lebensmotto',
-                'error': false,
-            },
-            'lieblingsfach': {
-                'hint': 'Lieblingsfach/fächer',
-                'error': true,
-            },
-            'hassfach': {
-                'hint': 'Hassfach',
-                'error': true,
-            },
-            'ohne-das': {
-                'hint': 'Ohne … hätte ich die Schulzeit nicht überstanden',
-                'error': true,
-            },
-            // insgeheime trennung
-            'songtipp': {
-                'hint': 'Mein geheimer Songtipp',
-                'error': false,
-            },
-            'lieblingsgetraenke': {
-                'hint': 'Lieblingsgetränk/e (anti-)alkoholisch',
-                'error': false,
-            },
-            'gewinnen': {
-                'hint': 'Dabei gewinne ich immer',
-                'error': false,
-            },
-            'zu-oft': {
-                'hint': 'Das sage ich zu oft',
-                'error': true,
-            },
-            'langweiliges-buch': {
-                'hint': 'Langweiligstes Buch aus der Schulzeit',
-                'error': true,
-            },
-            'abwesenheitsgrund': {
-                'hint': 'Häufigster Abwesenheitsgrund',
-                'error': true,
-            },
-            'gelernt': {
-                'hint': 'Das habe ich in meiner Schulzeit gelernt',
-                'error': true,
-            },
-            'vermissen': {
-                'hint': 'Das werde ich an der Schulzeit vermissen',
-                'error': false,
-            },
-            'tipplehrer': {
-                'hint': 'Mein Tipp an die Lehrer',
-                'error': true,
-            },
-            'ratschlag-schueler': {
-                'hint': 'Mein Ratschlag an die Schüler des Gympegs',
-                'error': false,
-            },
-        };
-
-        const loadForm = () => {
-            const form = document.querySelector('form');
-            for (const [id, data] of Object.entries(formData)) {
-                const div = document.createElement('div');
-                div.classList.add('col-12');
-
-                const label = document.createElement('label');
-                label.setAttribute('for', id);
-                label.classList.add('form-label');
-                label.innerText = data.hint;
-
-                div.appendChild(label);
-
-                const input = document.createElement('input');
-                input.setAttribute('type', 'text');
-                input.setAttribute('id', id);
-                input.setAttribute('class', 'form-control');
-                input.setAttribute('placeholder', data.hint);
-
-                div.appendChild(input);
-
-                if (data.error) {
-                    input.setAttribute('required', 'true');
-
-                    const error = document.createElement('div');
-                    error.classList.add('invalid-feedback');
-                    error.innerText = 'Bitte gib eine Antwort ein.';
-
-                    div.appendChild(error);
-                }
-
-                form.children[0].appendChild(div);
-            }
-
-            const submitButton = document.createElement('button');
-            submitButton.setAttribute('type', 'submit');
-            submitButton.setAttribute('class', 'btn btn-primary');
-            submitButton.innerText = 'Speichern';
-
-            form.children[0].appendChild(submitButton);
-
-            const padding = document.createElement('div');
-            padding.style.height = '60px';
-            form.children[0].appendChild(padding);
-
-            form.addEventListener('submit', (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-
-                if (form.checkValidity()) {
-                    const token = value('token').trim().toLowerCase();
-                    const fields = Object.keys(formData);
-                    fields.push('vorname');
-                    fields.push('geburtsdatum');
-
-                    const data = {};
-                    fields.forEach((field) => { data[field] = value(field).trim(); })
-
-                    sendData(token, data).then(() => {
-                        form.innerHTML = '';
-                        document.getElementById('title-text').innerText = 'Deine Daten wurden gespeichert.';
-                    });
-                }
-
-                form.classList.add('was-validated');
-            }, false);
-
-            const tokenInput = document.getElementById('token');
-            const tokenReloadButton = document.getElementById('token-reload-btn');
-            tokenReloadButton.style.cursor = 'pointer';
-            tokenReloadButton.style.fontFamily = 'unset';
-            tokenInput.oninput = () => {
-                const text = tokenInput.value.trim().toLowerCase();
-                if (text.length >= 6 && text.length <= 20) {
-                    tokenReloadButton.classList.remove('visually-hidden');
-                } else {
-                    tokenReloadButton.classList.add('visually-hidden');
-                }
-            };
-
-            tokenReloadButton.onclick = async () => {
-                try {
-                    const data = await getData(tokenInput.value.trim().toLowerCase());
-                    if (data !== null) {
-                        for (const [id, value] of Object.entries(data)) {
-                            document.getElementById(id).value = value;
-                        }
-                    }
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-        };
-
-        const getEntryDataDocument = async (token) => {
-            if (auth.currentUser === null) {
-                await signInAnonymously(auth);
-            }
-
-            const entryDataCollection = collection(firestore, 'entrydata');
-            return doc(entryDataCollection, token);
-        }
-
-        const getData = async (token) => {
-            const snapshot = await getDoc(await getEntryDataDocument(token));
-            if (snapshot.exists) {
-                return snapshot.data();
-            } else {
-                return null;
-            }
-        };
-
-        const sendData = async (token, data) => {
-            await setDoc(await getEntryDataDocument(token), data);
-        };
-
-        const value = (name) => {
-            return document.getElementById(name).value;
-        };
-
-        window.onload = loadForm;
-    </script>
-</body>
-
+    <script src="js/index.js" type="module"></script>
+  </body>
 </html>
