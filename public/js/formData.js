@@ -1,32 +1,49 @@
-const nameTokenData = {
-  vorname: {
-    hint: "Vorname",
-    required: true,
-    overrides: {
-      class: "col-sm-4",
-      error: "Bitte gib einen Vornamen ein.",
+const nameTokenFields = (width) => {
+  const cssClass = "col-sm-" + width;
+  return {
+    vorname: {
+      hint: "Vorname",
+      required: true,
+      overrides: {
+        class: cssClass,
+        error: "Bitte gib einen Vornamen ein.",
+      },
     },
-  },
-  token: {
-    hint: "Token",
-    required: true,
-    overrides: {
-      class: "col-sm-4",
-      type: "password",
-      labelId: "token-label",
-      error: "Bitte gib einen Token ein.",
+    token: {
+      hint: "Token",
+      required: true,
+      overrides: {
+        class: cssClass,
+        type: "password",
+        labelId: "token-label",
+        error: "Bitte gib einen Token ein.",
+      },
     },
-  },
+  };
 };
 
 export const formData = {
+  artikel: {
+    header: {
+      title: "Formular zur Abizeitung",
+      subtitle: "Hier sollen die fertigen Inidividualseiten abgegeben werden.",
+    },
+    fields: {
+      ...nameTokenFields(6),
+      bemerkung: {
+        hint: "Bemerkung/en zum Format (Schriftgröße, Schriftart, ...)",
+        required: false,
+      },
+    },
+  },
   steckbrief: {
     header: {
       title: "Formular zur Abizeitung",
-      subtitle: "Auf dieser Seite sollen Textfelder ausgefüllt werden, um die für jeden Schüler benötigten Daten sammeln zu können.<br /><b>Bitte bedenke, dass deine Antworten nicht zu lang sein sollten.</b>",
+      subtitle:
+        "Auf dieser Seite sollen Textfelder ausgefüllt werden, um die für jeden Schüler benötigten Daten sammeln zu können.<br /><b>Bitte bedenke, dass deine Antworten nicht zu lang sein sollten.</b>",
     },
     fields: {
-      ...nameTokenData,
+      ...nameTokenFields(4),
       geburtsdatum: {
         hint: "Geburtsdatum",
         required: true,

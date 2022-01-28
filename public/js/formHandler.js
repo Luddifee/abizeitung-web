@@ -1,4 +1,11 @@
-import { collection, doc, firestore, getDocument, setDocument, signIn } from "./firebase.js";
+import {
+  collection,
+  doc,
+  firestore,
+  getDocument,
+  setDocument,
+  signIn,
+} from "./firebase.js";
 import { formData } from "./formData.js";
 
 export const createTitle = (title) => {
@@ -12,6 +19,25 @@ export const createSubtitle = (subtitle) => {
   subtitleElement.id = "subtitle-text";
   subtitleElement.innerHTML = subtitle;
   return subtitleElement;
+};
+
+const dropdownTitle = (name) => {
+  return name.charAt(0).toUpperCase() + name.slice(1);
+};
+
+export const createDropdownSelect = (formType, callback) => {
+  const select = document.createElement("select");
+  Object.keys(formData).forEach((key) => {
+    const option = document.createElement("option");
+    option.value = key;
+    option.innerText = dropdownTitle(key);
+    select.appendChild(option);
+    if (key === formType) option.selected = true;
+  });
+
+  select.classList.add("form-select");
+  select.onchange = (_) => callback(select.value);
+  return select;
 };
 
 export const createLabel = (id, hint, overrides) => {
@@ -58,7 +84,17 @@ export const createTokenReloadButton = () => {
   tokenReloadButton.style.cursor = "pointer";
   tokenReloadButton.style.fontFamily = "unset";
   return tokenReloadButton;
-}
+};
+
+const createBackButton = () => {
+  const backButton = document.createElement("span");
+  backButton.style.cursor = "pointer";
+  backButton.style.color = "blue";
+  backButton.style.textDecoration = "underline blue";
+  backButton.onclick = window.onload;
+  backButton.innerText = "Zurück";
+  return backButton;
+};
 
 const getEntryDataDocument = () => {
   const token = formValue("token").trim().toLowerCase();
@@ -74,7 +110,6 @@ export const getFormData = async () => {
 };
 
 const formValue = (key) => {
-  console.log(key);
   return document.getElementById(key).value.trim();
 };
 
@@ -86,11 +121,13 @@ export const sendFormData = async (type) => {
     const data = {};
     keys.forEach((key) => (data[key] = formValue(key)));
     await setDocument(getEntryDataDocument(), data);
-
-    document.querySelector("form").innerHTML = "";
-    document.getElementById("subtitle-text").innerText =
-      "Deine Daten wurden gespeichert.";
   } else if (type === "artikel") {
     // TDOD: implement
   }
+
+  document.querySelector("form").innerHTML = "";
+  const subtitle = document.getElementById("subtitle-text");
+  subtitle.innerText = "Deine Daten wurden gespeichert.";
+  subtitle.appendChild(document.createElement("br"));
+  subtitle.appendChild(createBackButton());
 };

@@ -1,12 +1,10 @@
-import { auth, firestore } from "./firebase.js";
 import { formData } from "./formData.js";
 import {
+  createDropdownSelect,
   createSubtitle,
   createTitle,
   getFormData,
   sendFormData,
-} from "./formHandler.js";
-import {
   createLabel,
   createInput,
   createSubmitButton,
@@ -14,19 +12,25 @@ import {
   createTokenReloadButton,
 } from "./formHandler.js";
 
-var formType = "steckbrief";
-const loadPage = (formType) => {
+const loadPage = (formType, setFormType) => {
   const formDataObject = formData[formType];
 
   const header = document.getElementById("header");
   const form = document.querySelector("form");
   header.innerText = "";
   form.innerHTML = "";
+  form.classList.remove("was-validated");
 
   const title = createTitle(formDataObject.header.title);
   const subtitle = createSubtitle(formDataObject.header.subtitle);
   header.appendChild(title);
   header.appendChild(subtitle);
+
+  const dropdown = createDropdownSelect(formType, (t) => {
+    setFormType(t);
+    reloadPage();
+  });
+  form.appendChild(dropdown);
 
   for (const [id, data] of Object.entries(formDataObject.fields)) {
     const div = document.createElement("div");
@@ -91,4 +95,7 @@ const loadPage = (formType) => {
   }
 };
 
-window.onload = () => loadPage(formType);
+var globalFormType = "steckbrief";
+const setGlobalFormType = (t) => (globalFormType = t);
+export const reloadPage = () => loadPage(globalFormType, setGlobalFormType);
+window.onload = reloadPage;
